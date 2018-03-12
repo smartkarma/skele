@@ -90,7 +90,8 @@
     "roots": [
       "<rootDir>/packages/classic",
       "<rootDir>/packages/config",
-      "<rootDir>/packages/components"
+      "<rootDir>/packages/components",
+      "<rootDir>/packages/system"
     ],
     "testMatch": ["**/__tests__/**/*.js"],
     "collectCoverageFrom": [
