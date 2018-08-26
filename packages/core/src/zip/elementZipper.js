@@ -2,7 +2,7 @@
 
 import { makeZipper } from '../vendor/zippa'
 import { Iterable, List, Map } from 'immutable'
-import * as R from 'ramda'
+import R from 'ramda'
 import {
   isOfKind,
   asList,
@@ -20,12 +20,6 @@ const isBranch = R.curry((defaultChildPositions, element) => {
     return children && children.count() > 0
   }
   const positions = childPositions(defaultChildPositions, element)
-  // console.log(
-  //   'Child positions for: ',
-  //   element.get('kind'),
-  //   ' == ',
-  //   positions.toJS()
-  // )
   return positions.some(pos => element.get(pos))
 })
 
@@ -78,8 +72,7 @@ const singleChild = childColl =>
  * Creates an element zipper with the specified config
  * The function is hard-curried: (config) => (tree) => rootLocation
  *
- * @param config, configuration for the object, currently cupports o
- *  only the `defaultChildPositions` proprty
+ * @param config, configuration for the object, currently cupports only the `defaultChildPositions` property
  */
 export default function elementZipper(config) {
   const { defaultChildPositions } = config
