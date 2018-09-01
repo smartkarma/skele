@@ -66,6 +66,7 @@ test('core.zip interface', () => {
   expect(zip.ancestors).toEqual(anyFunction)
   expect(zip.descendants).toEqual(anyFunction)
   expect(zip.children).toEqual(anyFunction)
+  expect(zip.childrenFor).toEqual(anyFunction)
   expect(zip.propEq).toEqual(anyFunction)
   expect(zip.select).toEqual(anyFunction)
 })
