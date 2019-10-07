@@ -2,6 +2,7 @@
 
 import { fromJS } from 'immutable'
 import * as zip from '..'
+import * as R from 'ramda'
 
 describe('Editing a Zipper', () => {
   const organization = {
@@ -27,7 +28,7 @@ describe('Editing a Zipper', () => {
         name: 'andon',
         children: [
           {
-            kind: 'tm',
+            kind: ['tm', 'yoga'],
             name: 'blagoja',
           },
           {
@@ -48,7 +49,7 @@ describe('Editing a Zipper', () => {
       defaultChildPositions: 'children',
     })(fromJS(organization))
 
-  it('can be done using conditions (zip.editCond)', () => {
+  test('editCond() -- conditional editing of nodes in an entire tree', () => {
     // given
     const elementZipper = createElementZipper()
 
@@ -59,13 +60,14 @@ describe('Editing a Zipper', () => {
           item => item.get('name') === 'andon',
           item => item.set('name', 'sikavica'),
         ],
+        [['tm', 'yoga'], item => item.update('name', name => `yoga-${name}`)],
         ['tm', item => item.update('name', name => `member-${name}`)],
       ],
       elementZipper
     )
 
     // then
-    expect(result.value()).toEqualI(
+    expect(zip.node(result)).toEqualI(
       fromJS({
         kind: 'pm',
         name: 'alex',
@@ -89,8 +91,8 @@ describe('Editing a Zipper', () => {
             name: 'sikavica', // changed
             children: [
               {
-                kind: 'tm',
-                name: 'member-blagoja', // changed
+                kind: ['tm', 'yoga'],
+                name: 'yoga-member-blagoja', // changed
               },
               {
                 kind: 'tm',
@@ -105,5 +107,52 @@ describe('Editing a Zipper', () => {
         ],
       })
     )
+  })
+
+  test('editAt()', () => {
+    const root = createElementZipper()
+    const f = e => e.set('name', 'Filip')
+    const z = zip.down(zip.down(root))
+
+    const zEdited = zip.editAt(
+      R.pipe(
+        zip.down,
+        zip.down,
+        zip.right
+      ),
+      f,
+      z
+    )
+
+    expect(
+      zip.root(zEdited).getIn(['children', 0, 'children', 1, 'name'])
+    ).toEqual('Filip')
+
+    expect(() => {
+      zip.editAt(zip.up, f, z) // not allowed
+    }).toThrow()
+
+    expect(() => {
+      zip.editAt(zip.left, f, z) // not allowed
+    }).toThrow()
+
+    expect(() => {
+      zip.editAt(zip.right, f, z) // not allowed
+    }).toThrow()
+
+    expect(() => {
+      zip.editAt(zip.right, f, z) // not allowed
+    }).toThrow()
+
+    expect(() => {
+      zip.editAt(
+        R.pipe(
+          zip.down,
+          zip.right
+        ),
+        f,
+        z
+      ) // not allowed
+    }).toThrow()
   })
 })
